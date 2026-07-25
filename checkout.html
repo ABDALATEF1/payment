@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Checkout</title>
+
+  <!-- استبدل CLIENT_KEY بمفتاح Midtrans Client Key -->
+  <script
+    type="text/javascript"
+    src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="Mid-client-KVLezTTIYt1Yfb_N">
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    button {
+      background: #004ea2;
+      color: rgb(245, 240, 240);
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    button:hover {
+      background: #08111a;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Payment Checkout</h1>
+  <p>Amount: Rp. 50,000</p>
+
+  <button id="pay-button">Pay Now</button>
+
+  <script>
+    document.getElementById('pay-button').addEventListener('click', async () => {
+
+      try {
+
+      const response = await fetch('/api/orders', {
+      method: 'POST',
+     headers: {
+      'Content-Type': 'application/json'
+       }
+         });
+
+       const data = await response.json();
+
+          console.log("DATA =", data);
+           alert(JSON.stringify(data));
+
+        snap.pay(data.token, {
+          onSuccess: function(result) {
+            alert("Payment Success");
+            console.log(result);
+          },
+
+          onPending: function(result) {
+            alert("Payment Pending");
+            console.log(result);
+          },
+
+          onError: function(result) {
+            alert("Payment Failed");
+            console.log(result);
+          },
+
+          onClose: function() {
+            alert("Payment popup closed");
+          }
+        });
+
+      } catch (error) {
+        console.error(error);
+        alert("Error creating transaction");
+      }
+
+    });
+  </script>
+
+</body>
+</html>
